@@ -68,7 +68,8 @@ export function TodoItem({ todo, onToggle, onEdit, onDelete }: Props) {
   const hasDue = Boolean(todo.dueDate);
   const dots = IMPORTANCE_COLORS[todo.importance] ?? IMPORTANCE_COLORS[3];
   const [expanded, setExpanded] = useState(false);
-  const lineCount = todo.description.split('\n').length;
+  const description = todo.description ?? '';
+  const lineCount = description.split('\n').length;
   const isLong = lineCount > 3;
 
   return (
@@ -124,7 +125,7 @@ export function TodoItem({ todo, onToggle, onEdit, onDelete }: Props) {
                 todo.completed ? 'text-slate-400' : 'text-slate-500'
               } ${isLong && !expanded ? 'line-clamp-3' : ''}`}
             >
-              {renderDescription(todo.description)}
+              {renderDescription(description)}
             </p>
             {isLong && (
               <button
@@ -161,9 +162,9 @@ export function TodoItem({ todo, onToggle, onEdit, onDelete }: Props) {
             )}
           </div>
         )}
-        {todo.tags.length > 0 && (
+        {(todo.tags?.length ?? 0) > 0 && (
           <div className="mt-2 flex flex-wrap items-center gap-1.5">
-            {todo.tags.map((tag) =>
+            {(todo.tags ?? []).map((tag) =>
               /^https?:\/\//.test(tag) ? (
                 <a
                   key={tag}

@@ -22,12 +22,32 @@ export interface TodoStorage {
 
 const STORAGE_KEY = 'todos';
 
+function normalizeTodo(raw: unknown): Todo {
+  const t = (raw ?? {}) as Partial<Todo>;
+  return {
+    id: t.id ?? '',
+    title: t.title ?? '',
+    description: t.description ?? '',
+    dueDate: t.dueDate ?? '',
+    dueTime: t.dueTime ?? '',
+    importance: t.importance ?? 3,
+    category: t.category ?? '私用',
+    tags: Array.isArray(t.tags) ? t.tags : [],
+    source: t.source ?? 'web',
+    completed: t.completed ?? false,
+    createdAt: t.createdAt ?? Date.now(),
+    updatedAt: t.updatedAt ?? Date.now(),
+  };
+}
+
 function readAll(): Todo[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as Todo[]) : [];
+    return Array.isArray(parsed)
+      ? (parsed as unknown[]).map(normalizeTodo)
+      : [];
   } catch {
     return [];
   }
