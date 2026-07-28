@@ -92,8 +92,10 @@ export default function App() {
       <header className="mx-auto max-w-2xl px-5 pt-12 pb-2">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold leading-tight text-[#1e40af]">
-              Todo List
+            <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-[#1e40af] drop-shadow-[0_2px_0_rgba(255,255,255,0.6)]">
+              <span className="bg-gradient-to-r from-[#1e40af] via-blue-500 to-sky-400 bg-clip-text text-transparent">
+                Todo List
+              </span>
             </h1>
             <p className="mt-1 text-sm font-medium text-blue-700/70">
               {activeCount} 件残り
