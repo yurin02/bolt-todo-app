@@ -7,6 +7,7 @@ interface Props {
   onToggle: (id: string) => void;
   onEdit: (todo: Todo) => void;
   onDelete: (id: string) => void;
+  fading?: boolean;
 }
 
 function formatDueLabel(date: string, time: string): string {
@@ -63,7 +64,7 @@ function renderDescription(text: string): React.ReactNode {
   });
 }
 
-export function TodoItem({ todo, onToggle, onEdit, onDelete }: Props) {
+export function TodoItem({ todo, onToggle, onEdit, onDelete, fading }: Props) {
   const expired = isExpired(todo);
   const hasDue = Boolean(todo.dueDate);
   const dots = IMPORTANCE_COLORS[todo.importance] ?? IMPORTANCE_COLORS[3];
@@ -75,6 +76,8 @@ export function TodoItem({ todo, onToggle, onEdit, onDelete }: Props) {
   return (
     <div
       className={`flex items-stretch gap-3 rounded-2xl p-4 shadow-sm transition hover:shadow-md ${
+        fading ? 'duration-300 opacity-0' : ''
+      } ${
         todo.completed
           ? 'bg-emerald-50'
           : expired
