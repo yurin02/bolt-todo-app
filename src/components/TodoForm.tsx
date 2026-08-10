@@ -170,22 +170,23 @@ export function TodoForm({ open, initial, editingId, onClose, onSubmit }: Props)
             <p className="text-sm text-rose-500">{error}</p>
           )}
 
-          <div className="flex justify-end gap-3 pt-2">
+          <div className="flex flex-col items-stretch gap-3 pt-2 sm:justify-end sm:flex-row">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+              className="h-14 rounded-lg px-6 text-sm font-medium text-slate-600 transition hover:bg-slate-100 sm:px-4 sm:py-2.5 sm:h-auto"
             >
               キャンセル
             </button>
             <button
               type="submit"
-              className="rounded-lg bg-sky-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-600 active:scale-[0.98]"
+              className="h-14 rounded-lg bg-sky-500 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-600 active:scale-[0.98] sm:px-5 sm:py-2.5 sm:h-auto"
             >
               {editingId ? '更新する' : '追加する'}
             </button>
           </div>
         </form>
+        <div className="h-20 sm:hidden" aria-hidden />
       </div>
     </div>
   );
