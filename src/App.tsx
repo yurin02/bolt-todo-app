@@ -57,11 +57,13 @@ export default function App() {
   const [sortTab, setSortTab] = useState<SortTab>('today');
   const [fadingOut, setFadingOut] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    setTodos(storage.list());
-  }, []);
+  const refresh = async () => {
+    setTodos(await storage.list());
+  };
 
-  const refresh = () => setTodos(storage.list());
+  useEffect(() => {
+    refresh();
+  }, []);
 
   const openCreate = () => {
     setEditing(null);
@@ -73,15 +75,15 @@ export default function App() {
     setFormOpen(true);
   };
 
-  const handleSubmit = (input: TodoInput) => {
+  const handleSubmit = async (input: TodoInput) => {
     if (editing) {
-      storage.update(editing.id, input);
+      await storage.update(editing.id, input);
     } else {
-      storage.create(input);
+      await storage.create(input);
     }
     setFormOpen(false);
     setEditing(null);
-    refresh();
+    await refresh();
   };
 
   const handleToggle = (id: string) => {
@@ -89,9 +91,9 @@ export default function App() {
     const todo = todos.find((t) => t.id === id);
     if (todo && !todo.completed && sortTab === 'today') {
       setFadingOut((prev) => new Set(prev).add(id));
-      setTimeout(() => {
-        storage.toggle(id);
-        refresh();
+      setTimeout(async () => {
+        await storage.toggle(id);
+        await refresh();
         setFadingOut((prev) => {
           const next = new Set(prev);
           next.delete(id);
@@ -99,14 +101,12 @@ export default function App() {
         });
       }, 300);
     } else {
-      storage.toggle(id);
-      refresh();
+      storage.toggle(id).then(refresh);
     }
   };
 
   const handleDelete = (id: string) => {
-    storage.remove(id);
-    refresh();
+    storage.remove(id).then(refresh);
   };
 
   const sorted = useMemo(() => {
