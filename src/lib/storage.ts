@@ -1,4 +1,5 @@
 import type { Todo, TodoInput } from '@/types';
+import { RemoteApiTodoStorage } from './apiStorage';
 
 /**
  * Storage abstraction layer.
@@ -11,13 +12,13 @@ import type { Todo, TodoInput } from '@/types';
  */
 
 export interface TodoStorage {
-  list(): Todo[];
-  get(id: string): Todo | undefined;
-  create(input: TodoInput): Todo;
-  update(id: string, input: Partial<TodoInput>): Todo | undefined;
-  toggle(id: string): Todo | undefined;
-  remove(id: string): void;
-  clear(): void;
+  list(): Promise<Todo[]>;
+  get(id: string): Promise<Todo | undefined>;
+  create(input: TodoInput): Promise<Todo>;
+  update(id: string, input: Partial<TodoInput>): Promise<Todo | undefined>;
+  toggle(id: string): Promise<Todo | undefined>;
+  remove(id: string): Promise<void>;
+  clear(): Promise<void>;
 }
 
 const STORAGE_KEY = 'todos';
@@ -65,15 +66,15 @@ function makeId(): string {
 }
 
 class LocalStorageTodoStorage implements TodoStorage {
-  list(): Todo[] {
+  async list(): Promise<Todo[]> {
     return readAll().sort((a, b) => a.createdAt - b.createdAt);
   }
 
-  get(id: string): Todo | undefined {
+  async get(id: string): Promise<Todo | undefined> {
     return readAll().find((t) => t.id === id);
   }
 
-  create(input: TodoInput): Todo {
+  async create(input: TodoInput): Promise<Todo> {
     const now = Date.now();
     const todo: Todo = {
       id: makeId(),
@@ -95,7 +96,7 @@ class LocalStorageTodoStorage implements TodoStorage {
     return todo;
   }
 
-  update(id: string, input: Partial<TodoInput>): Todo | undefined {
+  async update(id: string, input: Partial<TodoInput>): Promise<Todo | undefined> {
     const todos = readAll();
     const idx = todos.findIndex((t) => t.id === id);
     if (idx === -1) return undefined;
@@ -132,7 +133,7 @@ class LocalStorageTodoStorage implements TodoStorage {
     return updated;
   }
 
-  toggle(id: string): Todo | undefined {
+  async toggle(id: string): Promise<Todo | undefined> {
     const todos = readAll();
     const idx = todos.findIndex((t) => t.id === id);
     if (idx === -1) return undefined;
@@ -145,14 +146,14 @@ class LocalStorageTodoStorage implements TodoStorage {
     return todos[idx];
   }
 
-  remove(id: string): void {
+  async remove(id: string): Promise<void> {
     const todos = readAll().filter((t) => t.id !== id);
     writeAll(todos);
   }
 
-  clear(): void {
+  async clear(): Promise<void> {
     writeAll([]);
   }
 }
 
-export const storage: TodoStorage = new LocalStorageTodoStorage();
+export const storage: TodoStorage = new RemoteApiTodoStorage();
